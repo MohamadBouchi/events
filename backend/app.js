@@ -2,9 +2,10 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const graphqlHttp = require('express-graphql')
 const { buildSchema } = require('graphql')
+const mongoose = require('mongoose')
+const Event = require('./models/events')
 
 const app = express()
-const events = []
 
 app.use(bodyParser.json())
 
@@ -48,21 +49,36 @@ app.use('/graphql', graphqlHttp({
     rootValue: {
 
         events: () => {
-            return events
+            return Event.find({title: 'test'})
+                .then(events => {
+                    return events.map(event => {
+                        return { ...event._doc, _id: event._doc._id.toString() }
+                    })
+                })
+                .catch(err => {
+                    console.log(err)
+                    throw err
+                })
         },
 
 
         createEvent: (args) => {
-            const event = {
-                _id: Math.random().toString(),
+            const event = new Event({
                 title: args.eventInput.title,
                 description: args.eventInput.description,
                 price: +args.eventInput.price,
-                date: args.eventInput.date
-            }
-            events.push(event)
-            console.log(events)
-            return events
+                date: new Date (args.eventInput.date)
+            })
+
+            return event.save()
+                .then(res => {
+                    return {...res._doc, _id: event.id}
+                })
+                .catch(err => {
+                    console.log(err)
+                    throw err
+                })
+            return event
         }
     },
 
@@ -71,4 +87,10 @@ app.use('/graphql', graphqlHttp({
 )
 
 
-app.listen(3000)
+mongoose.connect(`${process.env.DB_URL}`, {useNewUrlParser: true})
+        .then(() => {
+            app.listen(3000)
+        })
+        .catch(err => {
+            console.log(err)
+})
