@@ -4,6 +4,8 @@ const graphqlHttp = require('express-graphql')
 const { buildSchema } = require('graphql')
 const mongoose = require('mongoose')
 const Event = require('./models/events')
+const User = require('./models/user')
+
 
 const app = express()
 
@@ -12,6 +14,13 @@ app.use(bodyParser.json())
 app.use('/graphql', graphqlHttp({
     
     schema: buildSchema(`
+
+        type User {
+            _id: ID!
+            email: String!
+            password: String
+        }
+
 
         type Event {
             _id: ID!
@@ -26,6 +35,12 @@ app.use('/graphql', graphqlHttp({
         }
 
 
+        input UserInput {
+            email: String!
+            password: String!
+        }
+
+
         input EventInput {
             title: String!
             description: String!
@@ -34,6 +49,7 @@ app.use('/graphql', graphqlHttp({
         }
 
         type RootMutation {
+            createUser(userInput: UserInput): User
             createEvent(eventInput: EventInput): Event
         }
 
@@ -79,7 +95,13 @@ app.use('/graphql', graphqlHttp({
                     throw err
                 })
             return event
-        }
+        },
+
+
+        createUser: (args) => ({
+            email: args.userInput.email,
+            password: args.userInput.password
+        })
     },
 
     graphiql: true
@@ -88,6 +110,7 @@ app.use('/graphql', graphqlHttp({
 
 
 mongoose.connect(`${process.env.DB_URL}`, {useNewUrlParser: true})
+// mongoose.connect("mongodb://mongo:27017/react-graphql-events", {useNewUrlParser: true})
         .then(() => {
             app.listen(3000)
         })
