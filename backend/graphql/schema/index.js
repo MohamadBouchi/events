@@ -12,7 +12,6 @@ type Booking {
 }
 
 
-
 type User {
     _id: ID!
     email: String!
