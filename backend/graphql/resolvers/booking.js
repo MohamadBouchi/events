@@ -7,6 +7,10 @@ module.exports = {
 
 
     bookings: async () => {
+        
+        if (!rewq.isAuth)
+            throw new Error('unauthenticated')
+
         try {
             const bookings = await Booking.find()
             return bookings.map(booking => {
@@ -19,9 +23,13 @@ module.exports = {
 
 
     bookEvent: async args => {
+
+        if (!rewq.isAuth)
+            throw new Error('unauthenticated')
+
         const fetchedEvent = await Event.findOne({_id: args.eventId})
         const booking = new Booking({
-            user: '5c8d01cad06b1b0a508988aa',
+            user: req.userId,
             event: fetchedEvent
         })
         const result = await booking.save()
@@ -30,6 +38,10 @@ module.exports = {
 
 
     cancelBooking: async args => {
+
+        if (!rewq.isAuth)
+            throw new Error('unauthenticated')
+
         try{
             const booking = await Booking.findById(args.bookingId).populate('event')
             const event = transformEvent(booking.event)
