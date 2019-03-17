@@ -1,11 +1,22 @@
 import React, { Component } from 'react';
 import './App.css';
+import { Switch, BrowserRouter, Route, Redirect } from 'react-router-dom'
+import AuthPage from './pages/Auth'
+import BookingsPage from './pages/Bookings'
+import EventsPage from './pages/Events'
+
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-      </div>
+      <BrowserRouter>
+        <Switch>
+          <Redirect from="/" to="/auth" exact/>
+          <Route path="/auth" component={AuthPage} />
+          <Route path="/events" component={EventsPage} />
+          <Route path="/bookings" component={BookingsPage} />
+        </Switch>
+      </BrowserRouter>
     );
   }
 }
