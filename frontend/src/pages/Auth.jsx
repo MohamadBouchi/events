@@ -5,7 +5,6 @@ class Auth extends Component {
     return (
       <div>
         <h2>auth page</h2>
-        
       </div>
     )
   }

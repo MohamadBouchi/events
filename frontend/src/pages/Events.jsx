@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 
-export default class Bookings extends Component {
+export default class Events extends Component {
   render() {
     return (
       <div>
-        
+        events
       </div>
     )
   }
