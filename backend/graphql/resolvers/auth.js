@@ -19,7 +19,7 @@ module.exports = {
             throw new Error('password is not correct')
         
         const token = await jwt.sign({userId: user.id, email: user.email}, 'somesupersecretkey', {
-            exoiresIn: '1h'
+            expiresIn: '1h'
         })
 
         return {
