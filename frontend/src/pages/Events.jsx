@@ -131,7 +131,7 @@ console.log(price)
   render() {
 
     const eventList = this.state.events.map( event => {
-      return <li className="events__list-item" ke={event._id}>{event.title}</li>
+      return <li className="events__list-item" key={event._id}>{event.title}</li>
     }) 
 
     return (
