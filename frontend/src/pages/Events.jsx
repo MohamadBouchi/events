@@ -11,7 +11,8 @@ export default class Events extends Component {
   state = {
     creating: false,
     events: [],
-    isLoading: false
+    isLoading: false,
+    selectedEvent: null
   }
 
   static contextType =  AuthContext
@@ -95,7 +96,7 @@ export default class Events extends Component {
   }
 
   modalCancelHandler = () => {
-    this.setState({creating: false})
+    this.setState({creating: false, selectedEvent: null})
   }
 
   fetchEvents () {
@@ -143,15 +144,24 @@ export default class Events extends Component {
     })
   }
 
+  showDetailHandler = (eventId) => {
+    this.setState(prevState => {
+      const selectedEvent= prevState.events.find(e => e._id === eventId)
+      return {selectedEvent: selectedEvent}
+    })
+  }
+
+  bookEventHandler = () => {}
 
   render() {
 
     return (
       <React.Fragment>
-        {this.state.creating && <Backdrop />}
+        {(this.state.creating || this.state.selectedEvent) && <Backdrop />}
         {this.state.creating && 
           <Modal onCancel={this.modalCancelHandler}
                   onConfirm={this.modalConfirmHandler}
+                  confirmText="confirm"
                   title="add event" canCancel canConfirm>
                   <form>
                     <div className="form-control">
@@ -173,11 +183,20 @@ export default class Events extends Component {
                   </form>
           </Modal>
         }
+        {this.state.selectedEvent && 
+          <Modal onCancel={this.modalCancelHandler}
+                  onConfirm={this.bookEventHandler}
+                  confirmText="book"
+                  title={this.state.selectedEvent.title} canCancel canConfirm>
+                  <h1>{this.state.selectedEvent.title}</h1>
+                  <h2>{this.state.selectedEvent.price}</h2>
+                  <p>{this.state.selectedEvent.description}</p>
+          </Modal>}
         {this.context.token && <div className="events-control">
           <p>share events</p>
           <button className="btn" onClick={this.startCreateEventHandler}>create event</button>
         </div>}
-        {this.state.isLoading ? <Spinner /> : <EventList events={this.state.events} authUserId={this.context.userId}/>}
+        {this.state.isLoading ? <Spinner /> : <EventList onViewDetail={this.showDetailHandler} events={this.state.events} authUserId={this.context.userId}/>}
       </React.Fragment>
     )
   }
