@@ -6,7 +6,6 @@ import AuthContext from '../../context/auth-context'
 const mainNavigation = props => (
     <AuthContext.Consumer>
         {context => {
-            console.log(context)
             return(
                 <header className="main-navigation">
                     <div className="main-navigatio__logo">

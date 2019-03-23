@@ -3,12 +3,15 @@ import './Events.css'
 import Modal from '../components/Modal/Modal'
 import Backdrop from '../components/Backdrop/Backdrop'
 import AuthContext from '../context/auth-context'
+import EventList from '../components/Events/EventList/EventList'
+import Spinner from '../components/spinner/Spinner'
 
 export default class Events extends Component {
 
   state = {
     creating: false,
-    events: []
+    events: [],
+    isLoading: false
   }
 
   static contextType =  AuthContext
@@ -33,11 +36,11 @@ export default class Events extends Component {
     const price = +this.priceElRef.current.value
     const date = this.dateElRef.current.value.toString()
     const description = this.descriptionElRef.current.value
-console.log(price)
+
     if (title.trim().length === 0 || price < 0 || date.trim().length === 0 || description.trim().length === 0)
       return
 
-    const event = {title, price, date, description}
+      
 
     const requestBody = {
       query: `
@@ -48,10 +51,6 @@ console.log(price)
             description
             date
             price
-            creator {
-              _id
-              email
-            }
           }
         }  
       `
@@ -74,7 +73,21 @@ console.log(price)
         return res.json()
     })
     .then(resData => {
-      this.fetchEvents()
+      this.setState(prevState => {
+        const updatedEvents = [...prevState.events]
+        updatedEvents.push(
+          { 
+            _id : resData.data.createEvent._id,
+            title: resData.data.createEvent.title,
+            description: resData.data.createEvent.description,
+            date: resData.data.createEvent.date,
+            price: resData.data.createEvent.price,
+            creator: {
+              _id: this.context.userId
+              }
+          })
+          return {events: updatedEvents}
+      })
     })
     .catch(err => {
       console.log(err)
@@ -86,6 +99,8 @@ console.log(price)
   }
 
   fetchEvents () {
+    this.setState({isLoading: true})
+
     const requestBody = {
       query: `
         query {
@@ -120,19 +135,16 @@ console.log(price)
     })
     .then(resData => {
       const events = resData.data.events
-      this.setState({events: events})
+      this.setState({events: events, isLoading: false})
     })
     .catch(err => {
+      this.setState({isLoading: false})
       console.log(err)
     })
   }
 
 
   render() {
-
-    const eventList = this.state.events.map( event => {
-      return <li className="events__list-item" key={event._id}>{event.title}</li>
-    }) 
 
     return (
       <React.Fragment>
@@ -165,10 +177,7 @@ console.log(price)
           <p>share events</p>
           <button className="btn" onClick={this.startCreateEventHandler}>create event</button>
         </div>}
-
-        <ul className="events__list">
-          {eventList}
-        </ul>
+        {this.state.isLoading ? <Spinner /> : <EventList events={this.state.events} authUserId={this.context.userId}/>}
       </React.Fragment>
     )
   }
