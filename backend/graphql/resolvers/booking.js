@@ -6,9 +6,9 @@ const { transformBooking, transformEvent } = require('./merge')
 module.exports = {
 
 
-    bookings: async () => {
-        
-        if (!rewq.isAuth)
+    bookings: async (args, req) => {
+        console.log(req)
+        if (!req.isAuth)
             throw new Error('unauthenticated')
 
         try {
@@ -22,9 +22,9 @@ module.exports = {
     },
 
 
-    bookEvent: async args => {
+    bookEvent: async (args, req) => {
 
-        if (!rewq.isAuth)
+        if (!req.isAuth)
             throw new Error('unauthenticated')
 
         const fetchedEvent = await Event.findOne({_id: args.eventId})
@@ -37,9 +37,9 @@ module.exports = {
     },
 
 
-    cancelBooking: async args => {
+    cancelBooking: async (args, req) => {
 
-        if (!rewq.isAuth)
+        if (!req.isAuth)
             throw new Error('unauthenticated')
 
         try{
