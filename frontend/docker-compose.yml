@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  app:
+    container_name: events
+    restart: always
+    image: mohamedsubhi/events
+    build: .
+    ports:
+      - '80:3000'
