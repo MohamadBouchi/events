@@ -45,8 +45,8 @@ export default class Events extends Component {
 
     const requestBody = {
       query: `
-        mutation {
-          createEvent(eventInput: {title: "${title}", description: "${description}", price: ${price}, date: "${date}"}) {
+        mutation CreateEvent($title: String!, $desc: String!, $price: Float!, $date: String!){
+          createEvent(eventInput: {title: $title, description: $desc, price: $price, date: $date}) {
             _id
             title
             description
@@ -54,7 +54,13 @@ export default class Events extends Component {
             price
           }
         }  
-      `
+      `,
+      variables: {
+        title: title,
+        desc: description,
+        price: price,
+        date: date
+      }
     }
 
     const token = this.context.token
@@ -161,14 +167,17 @@ export default class Events extends Component {
     }
     const requestBody = {
       query: `
-        mutation {
-          bookEvent(eventId: "${this.state.selectedEvent._id}") {
+        mutation BookEvent($id: ID!){
+          bookEvent(eventId: $id) {
             _id
             createdAt
             updatedAt
           }
         }  
-      `
+      `,
+      variables: {
+        id: this.state.selectedEvent._id
+      }
     }
 
 
