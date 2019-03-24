@@ -1,8 +1,9 @@
 version: '3'
 
 services:
-  backend-app:
-    container_name: react-graphql-events
+  app:
+    container_name: graphql-events
+    name: mohamedsubhi/graphql-events
     restart: always
     build: ./backend
     ports:
