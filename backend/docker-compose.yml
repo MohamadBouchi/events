@@ -5,7 +5,7 @@ services:
     container_name: graphql-events
     name: mohamedsubhi/graphql-events
     restart: always
-    build: ./backend
+    build: .
     ports:
       - '80:3000'
     links:
