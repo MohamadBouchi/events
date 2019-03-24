@@ -2,11 +2,11 @@ FROM node:10
 
 WORKDIR /user/src/app
 
-COPY ./backend/package*.json ./
+COPY ./package*.json ./
 
 RUN npm install
 
-COPY ./backend/ .
+COPY . .
 
 EXPOSE 3000
 

@@ -32,8 +32,8 @@ app.use('/graphql', graphqlHttp({
 )
 
 
-mongoose.connect(`${process.env.DB_URL}`, {useNewUrlParser: true})
-// mongoose.connect("mongodb://mongo:27017/react-graphql-events", {useNewUrlParser: true})
+// mongoose.connect(`${process.env.DB_URL}`, {useNewUrlParser: true})
+mongoose.connect("mongodb://mongo:27017/react-graphql-events", {useNewUrlParser: true})
         .then(() => {
             app.listen(3000)
         })
